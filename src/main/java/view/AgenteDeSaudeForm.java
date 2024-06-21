@@ -37,7 +37,7 @@ public class AgenteDeSaudeForm extends JFrame{
     public AgenteDeSaudeForm(){
         service = new AgenteDeSaudeService();
 
-        setTitle("Diretor");
+        setTitle("Agente de saúde");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(550, 550);
 
@@ -105,12 +105,12 @@ public class AgenteDeSaudeForm extends JFrame{
 
         labelDataContratacao = new JLabel("Data da contratação:");
         constraints.gridx = 0;
-        constraints.gridy = 4;
+        constraints.gridy = 5;
         painelEntrada.add(labelDataContratacao, constraints);
 
         campoDataContratacao = new JTextField(20);
         constraints.gridx = 1;
-        constraints.gridy = 4;
+        constraints.gridy = 5;
         painelEntrada.add(campoDataContratacao, constraints);
 
         montarPainelBotoes(constraints, painelEntrada);
@@ -124,31 +124,31 @@ public class AgenteDeSaudeForm extends JFrame{
         botoesConstraints.insets = new Insets(5, 5, 5, 5);
 
         botaoSalvar = new JButton("Salvar");
-        //botaoSalvar.addActionListener(e -> executarBotaoSalvar());
+        botaoSalvar.addActionListener(e -> executarBotaoSalvar());
         constraints.gridx = 0;
         constraints.gridy = 0;
         painelBotoes.add(botaoSalvar, botoesConstraints);
 
         botaoCancelar = new JButton("Cancelar");
-        //botaoCancelar.addActionListener(e -> limparCampos());
+        botaoCancelar.addActionListener(e -> limparCampos());
         constraints.gridx = 1;
         constraints.gridy = 0;
         painelBotoes.add(botaoCancelar, botoesConstraints);
 
         botaoDeletar = new JButton("Deletar");
-        //botaoDeletar.addActionListener(e -> executarBotaoDeletar());
+        botaoDeletar.addActionListener(e -> executarBotaoDeletar());
         constraints.gridx = 2;
         constraints.gridy = 0;
         painelBotoes.add(botaoDeletar, botoesConstraints);
 
         botaoVoltar = new JButton("Voltar");
-        //botaoVoltar.addActionListener(e -> executarBotaoVoltar());
+        botaoVoltar.addActionListener(e -> executarBotaoVoltar());
         constraints.gridx = 3;
         constraints.gridy = 0;
         painelBotoes.add(botaoVoltar, botoesConstraints);
 
         constraints.gridx = 0;
-        constraints.gridy = 5;
+        constraints.gridy = 6;
         constraints.gridwidth = 2;
         painelEntrada.add(painelBotoes, constraints);
     }
@@ -230,19 +230,16 @@ public class AgenteDeSaudeForm extends JFrame{
         String telefone = campoTelefone.getText().trim();
         String cpf = campoCpf.getText().trim();
         String especialidade = campoEspecialidade.getText().trim();
-        String dataRegistroText = campoDataContratacao.getText().trim();
+        String dataContratacaoText = campoDataContratacao.getText().trim();
 
-        if(dataRegistroText.isEmpty()){
-            showMessageDialog(this, "A data de contratação do agente de saúde não pode estar vazia!");
-            return null;
-        }
-
-        Date dataContratacao;
-        try {
-            dataContratacao = Date.valueOf(dataRegistroText);
-        } catch (IllegalArgumentException e) {
-            showMessageDialog(null, "A data de contratação do agente de saúde é inválida! Deve estar no formato YYYY-MM-DD.");
-            return null;
+        Date dataContratacao = null;
+        if(!dataContratacaoText.isEmpty()){
+            try {
+                dataContratacao = Date.valueOf(dataContratacaoText);
+            } catch (IllegalArgumentException e) {
+                showMessageDialog(null,
+                        "A data de contratação do agente de saúde é inválida! Deve estar no formato YYYY-MM-DD.");
+            }
         }
 
         return campoId.getText().isEmpty()
@@ -256,14 +253,14 @@ public class AgenteDeSaudeForm extends JFrame{
             if (selectedRow != -1) {
                 var id = (Integer) tabela.getValueAt(selectedRow, 0);
                 var nome = (String) tabela.getValueAt(selectedRow, 1);
-                var telefone = (Integer) tabela.getValueAt(selectedRow, 2);
+                var telefone = (String) tabela.getValueAt(selectedRow, 2);
                 var cpf = (String) tabela.getValueAt(selectedRow, 3);
                 var especialidade = (String) tabela.getValueAt(selectedRow, 4);
                 var dataContratacao = (Date) tabela.getValueAt(selectedRow, 5);
 
                 campoId.setText(id.toString());
                 campoNomeAgente.setText(nome);
-                campoTelefone.setText(telefone.toString());
+                campoTelefone.setText(telefone);
                 campoCpf.setText(cpf);
                 campoEspecialidade.setText(especialidade);
                 campoDataContratacao.setText(dataContratacao.toString());

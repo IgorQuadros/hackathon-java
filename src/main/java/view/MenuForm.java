@@ -8,6 +8,8 @@ public class MenuForm extends JFrame {
     private JLabel labelPrincipal;
     private JLabel labelCuidador;
     private JButton botaoCuidador;
+    private JLabel labelAgente;
+    private JButton botaoAgente;
 
     public MenuForm(){
         setTitle("Menu Principal");
@@ -28,7 +30,7 @@ public class MenuForm extends JFrame {
         constraints.gridwidth = 2;
         panel.add(labelPrincipal, constraints);
 
-        labelCuidador = new JLabel("Acessar CRUD de Cuidador");
+        labelCuidador = new JLabel("Acessar cuidadores");
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.gridwidth = 1;
@@ -40,6 +42,17 @@ public class MenuForm extends JFrame {
         constraints.gridy = 1;
         panel.add(botaoCuidador, constraints);
 
+        labelAgente = new JLabel("Acessar Agentes de saúde");
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        panel.add(labelAgente, constraints);
+
+        botaoAgente = new JButton("Agente");
+        botaoAgente.addActionListener(e -> abrirAgenteForm());
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        panel.add(botaoAgente, constraints);
+
         add(panel);
         setLocationRelativeTo(null);
     }
@@ -47,6 +60,12 @@ public class MenuForm extends JFrame {
     private void abrirCuidadorForm() {
         CuidadorForm cuidadorForm = new CuidadorForm();
         cuidadorForm.setVisible(true);
+        dispose();
+    }
+
+    private void abrirAgenteForm() {
+        AgenteDeSaudeForm agenteForm = new AgenteDeSaudeForm();
+        agenteForm.setVisible(true);
         dispose();
     }
 }

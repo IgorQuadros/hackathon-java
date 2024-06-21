@@ -10,7 +10,7 @@ public class AgenteDeSaude {
     private String especialidade;
     private Date dataContratacao;
 
-    public AgenteDeSaude(String nome, String cpf, String telefone,
+    public AgenteDeSaude(String nome, String telefone, String cpf,
                          String especialidade, Date dataContratacao) {
         this.nome = nome;
         this.telefone = telefone;
@@ -19,8 +19,8 @@ public class AgenteDeSaude {
         this.dataContratacao = dataContratacao;
     }
 
-    public AgenteDeSaude(Integer id, String nome, String cpf,
-                         String telefone, String especialidade, Date dataContratacao) {
+    public AgenteDeSaude(Integer id, String nome,
+                         String telefone, String cpf, String especialidade, Date dataContratacao) {
         this.id = id;
         this.nome = nome;
         this.telefone = telefone;
@@ -45,16 +45,16 @@ public class AgenteDeSaude {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
-    }
-
     public String getTelefone() {
         return telefone;
     }
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public String getCpf() {
+        return cpf;
     }
 
     public void setCpf(String cpf) {

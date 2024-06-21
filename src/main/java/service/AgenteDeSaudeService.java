@@ -19,7 +19,9 @@ public class AgenteDeSaudeService {
             var dao = new AgenteDeSaudeDao();
 
             if(agente.getId() == null){
-                //dao.inserir(agente);
+                dao.inserir(agente);
+            }else{
+                dao.atualizar(agente);
             }
         }catch (Exception e){
             System.out.println(e.getMessage());
@@ -46,29 +48,51 @@ public class AgenteDeSaudeService {
     }
 
     public void validarCamposObrigatorios(AgenteDeSaude agente) throws Exception{
-        if(agente.getNome() == null || agente.getNome().trim().isEmpty()){
-            showMessageDialog(null, "O nome do agente não pode estar vazio!");
-            throw new Exception("Nome do agente inválido!");
-        }
-        if(agente.getTelefone() == null || agente.getTelefone().trim().isEmpty()){
-            showMessageDialog(null, "O telefone do agente não pode estar vazio!");
-        }
-        if(agente.getCpf() == null || agente.getCpf().trim().isEmpty()){
-            showMessageDialog(null, "O cpf do agente não pode estar vazio!");
-        }
-        if(agente.getEspecialidade() == null || agente.getEspecialidade().trim().isEmpty()){
-            showMessageDialog(null, "A especialidade do agente não pode estar vazio!");
+        StringBuilder erros = new StringBuilder();
+
+        if (agente.getNome() == null || agente.getNome().trim().isEmpty()) {
+            erros.append("O nome do agente não pode estar vazio!\n");
+        } else if (!isStringValida(agente.getNome())) {
+            erros.append("O nome do agente é inválido! Deve conter apenas letras e espaços.\n");
         }
 
-        if(!isStringValida(agente.getNome())){
-            showMessageDialog(null,
-                    "O nome do agente é inválido! Deve conter apenas letras e espaços.");
-            throw new Exception("Nome do agente inválido.");
+        if (agente.getTelefone() == null || agente.getTelefone().trim().isEmpty()) {
+            erros.append("O telefone do agente não pode estar vazio!\n");
+        } else if (!isTelefoneValido(agente.getTelefone())) {
+            erros.append("O telefone do agente é inválido! Deve conter apenas números.\n");
+        }
+
+        if (agente.getCpf() == null || agente.getCpf().trim().isEmpty()) {
+            erros.append("O CPF do agente não pode estar vazio!\n");
+        } else if (!isCpfValido(agente.getCpf())) {
+            erros.append("O CPF do agente é inválido! Deve conter apenas números.\n");
+        }
+
+        if (agente.getEspecialidade() == null || agente.getEspecialidade().trim().isEmpty()) {
+            erros.append("A especialidade do agente não pode estar vazia!\n");
+        }
+
+        if (agente.getDataContratacao() == null) {
+            erros.append("A data da contratação do agente não pode estar vazia!\n");
+        }
+
+        if (erros.length() > 0) {
+            showMessageDialog(null, erros.toString());
+            throw new Exception(erros.toString());
         }
     }
 
     private boolean isStringValida(String str) {
         String regex = "^[a-zA-Z\\s]+$";
         return Pattern.matches(regex, str);
+    }
+    private boolean isTelefoneValido(String telefone) {
+        String regex = "^\\d+$";
+        return Pattern.matches(regex, telefone);
+    }
+
+    private boolean isCpfValido(String cpf) {
+        String regex = "^\\d+$";
+        return Pattern.matches(regex, cpf);
     }
 }
