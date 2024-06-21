@@ -1,5 +1,6 @@
 package view;
 
+import com.google.protobuf.Message;
 import model.Cuidador;
 import service.CuidadorService;
 
@@ -11,6 +12,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 
 import static javax.swing.JOptionPane.*;
+import static javax.swing.SwingUtilities.*;
 
 public class CuidadorForm extends JFrame{
     private CuidadorService service;
@@ -33,7 +35,7 @@ public class CuidadorForm extends JFrame{
     public CuidadorForm(){
         service = new CuidadorService();
 
-        setTitle("Diretor");
+        setTitle("Cuidador");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(550, 550);
 
@@ -215,17 +217,14 @@ public class CuidadorForm extends JFrame{
         String cpf = campoCpf.getText().trim();
         String dataRegistroText = campoDataRegistro.getText().trim();
 
-        if(dataRegistroText.isEmpty()){
-            showMessageDialog(this, "A data de registro do cuidador não pode estar vazia!");
-            return null;
-        }
-
-        Date dataRegistro;
-        try {
-            dataRegistro = Date.valueOf(dataRegistroText);
-        } catch (IllegalArgumentException e) {
-            showMessageDialog(null, "A data de registro do cuidador é inválida! Deve estar no formato YYYY-MM-DD.");
-            return null;
+        Date dataRegistro = null;
+        if(!dataRegistroText.isEmpty()){
+            try {
+                dataRegistro = Date.valueOf(dataRegistroText);
+            } catch (IllegalArgumentException e) {
+                showMessageDialog(null,
+                        "A data de registro do cuidador é inválida! Deve estar no formato YYYY-MM-DD.");
+            }
         }
 
         return campoId.getText().isEmpty()
@@ -239,13 +238,13 @@ public class CuidadorForm extends JFrame{
             if (selectedRow != -1) {
                 var id = (Integer) tabela.getValueAt(selectedRow, 0);
                 var nome = (String) tabela.getValueAt(selectedRow, 1);
-                var telefone = (Integer) tabela.getValueAt(selectedRow, 2);
+                var telefone = (String) tabela.getValueAt(selectedRow, 2);
                 var cpf = (String) tabela.getValueAt(selectedRow, 3);
                 var dataRegistro = (Date) tabela.getValueAt(selectedRow, 4);
 
                 campoId.setText(id.toString());
                 campoNomeCuidador.setText(nome);
-                campoTelefone.setText(telefone.toString());
+                campoTelefone.setText(telefone);
                 campoCpf.setText(cpf);
                 campoDataRegistro.setText(dataRegistro.toString());
             }

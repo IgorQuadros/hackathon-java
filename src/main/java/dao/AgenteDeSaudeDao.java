@@ -1,7 +1,6 @@
 package dao;
 
 import model.AgenteDeSaude;
-import model.Cuidador;
 
 import java.sql.*;
 import java.util.ArrayList;
