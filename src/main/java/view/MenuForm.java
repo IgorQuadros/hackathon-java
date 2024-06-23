@@ -10,6 +10,8 @@ public class MenuForm extends JFrame {
     private JButton botaoCuidador;
     private JLabel labelAgente;
     private JButton botaoAgente;
+    private JLabel labelHistorico;
+    private JButton botaoHistorico;
 
     public MenuForm(){
         setTitle("Menu Principal");
@@ -53,6 +55,17 @@ public class MenuForm extends JFrame {
         constraints.gridy = 2;
         panel.add(botaoAgente, constraints);
 
+        labelHistorico = new JLabel("Acessar Historico de idosos");
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        panel.add(labelHistorico, constraints);
+
+        botaoHistorico = new JButton("Historico");
+        botaoHistorico.addActionListener(e -> abrirHistoricoForm());
+        constraints.gridx = 1;
+        constraints.gridy = 3;
+        panel.add(botaoHistorico, constraints);
+
         add(panel);
         setLocationRelativeTo(null);
     }
@@ -62,10 +75,14 @@ public class MenuForm extends JFrame {
         cuidadorForm.setVisible(true);
         dispose();
     }
-
     private void abrirAgenteForm() {
         AgenteDeSaudeForm agenteForm = new AgenteDeSaudeForm();
         agenteForm.setVisible(true);
+        dispose();
+    }
+    private void abrirHistoricoForm() {
+        HistoricoForm historico = new HistoricoForm();
+        historico.setVisible(true);
         dispose();
     }
 }

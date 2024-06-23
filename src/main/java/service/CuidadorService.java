@@ -47,42 +47,38 @@ public class CuidadorService {
         }
     }
 
-    public void validarCamposObrigatorios(Cuidador cuidador) throws Exception{
-        if(cuidador.getNome() == null || cuidador.getNome().trim().isEmpty()){
-            showMessageDialog(null, "O nome do cuidador não pode estar vazio!");
-            throw new Exception("Nome inválido!");
-        }
-        else if(cuidador.getTelefone() == null || cuidador.getTelefone().trim().isEmpty()){
-            showMessageDialog(null, "O telefone do cuidador não pode estar vazio!");
-            throw new Exception("Telefone inválido!");
-        }
-        else if(cuidador.getCpf() == null || cuidador.getCpf().trim().isEmpty()){
-            showMessageDialog(null, "O cpf do cuidador não pode estar vazio!");
-            throw new Exception("CPF inválido!");
-        }
-        else if(cuidador.getDataRegistro() == null){
-            showMessageDialog(null,
-                    "A data de registro do cuidador não pode estar vazia ou em formato inválido!");
-            throw new Exception("Data de registro inválida!");
+    public void validarCamposObrigatorios(Cuidador cuidador) throws Exception {
+        StringBuilder erros = new StringBuilder();
+
+        if (cuidador.getNome() == null || cuidador.getNome().trim().isEmpty()) {
+            erros.append("O nome do cuidador não pode estar vazio!\n");
+        } else if (!isStringValida(cuidador.getNome())) {
+            erros.append("O nome do cuidador é inválido! Deve conter apenas letras e espaços.\n");
         }
 
-        if(!isStringValida(cuidador.getNome())){
-            showMessageDialog(null,
-                    "O nome do cuidador é inválido! Deve conter apenas letras e espaços.");
-            throw new Exception("Nome inválido.");
-        }
-        if (!isTelefoneValido(cuidador.getTelefone())) {
-            showMessageDialog(null,
-                    "O telefone do cuidador é inválido! Deve conter apenas números.");
-            throw new Exception("Telefone inválido.");
+        if (cuidador.getTelefone() == null || cuidador.getTelefone().trim().isEmpty()) {
+            erros.append("O telefone do cuidador não pode estar vazio!\n");
+        } else if (!isTelefoneValido(cuidador.getTelefone())) {
+            erros.append("O telefone do cuidador é inválido! Deve conter apenas números.\n");
         }
 
-        if (!isCpfValido(cuidador.getCpf())) {
-            showMessageDialog(null,
-                    "O CPF do cuidador é inválido! Deve conter apenas números.");
-            throw new Exception("CPF inválido.");
+        if (cuidador.getCpf() == null || cuidador.getCpf().trim().isEmpty()) {
+            erros.append("O CPF do cuidador não pode estar vazio!\n");
+        } else if (!isCpfValido(cuidador.getCpf())) {
+            erros.append("O CPF do cuidador é inválido! Deve conter apenas números.\n");
+        }
+
+        if (cuidador.getDataRegistro() == null) {
+            erros.append("A data de registro do cuidador não pode estar vazia ou em formato inválido!\n");
+        }
+
+        if (erros.length() > 0) {
+            showMessageDialog(null, erros.toString(),
+                    "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            throw new Exception(erros.toString());
         }
     }
+
 
     private boolean isStringValida(String str) {
         String regex = "^[a-zA-Z\\s]+$";

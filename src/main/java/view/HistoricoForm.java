@@ -1,39 +1,39 @@
 package view;
 
-import model.Cuidador;
-import service.CuidadorService;
+import model.Historico;
+import model.Idoso;
+import service.HistoricoService;
+import service.IdosoService;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
 
 import static javax.swing.JOptionPane.*;
 
-public class CuidadorForm extends JFrame{
-    private CuidadorService service;
+public class HistoricoForm extends JFrame {
+    private IdosoService idosoService;
+    private HistoricoService historicoService;
     private JLabel labelId;
     private JTextField campoId;
-    private JLabel labelNomeCuidador;
-    private JTextField campoNomeCuidador;
-    private JLabel labelTelefone;
-    private JTextField campoTelefone;
-    private JLabel labelCpf;
-    private JTextField campoCpf;
-    private JLabel labelDataRegistro;
-    private JTextField campoDataRegistro;
+    private JLabel labelIdosoId;
+    private JComboBox<Idoso> comboBoxIdosoId;
+    private JLabel labelDoencasPreexistentes;
+    private JTextField campoDoencasPreexistentes;
     private JButton botaoSalvar;
     private JButton botaoCancelar;
     private JButton botaoDeletar;
     private JButton botaoVoltar;
     private JTable tabela;
 
-    public CuidadorForm(){
-        service = new CuidadorService();
+    public HistoricoForm() {
+        idosoService = new IdosoService();
+        historicoService = new HistoricoService();
 
-        setTitle("Cuidador");
+        setTitle("Histórico de Saúde do Idoso");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(550, 550);
 
@@ -43,7 +43,7 @@ public class CuidadorForm extends JFrame{
         setLocationRelativeTo(null);
     }
 
-    private JPanel montarPainelEntrada(){
+    private JPanel montarPainelEntrada() {
         JPanel painelEntrada = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(5, 5, 5, 5);
@@ -59,45 +59,26 @@ public class CuidadorForm extends JFrame{
         constraints.gridy = 0;
         painelEntrada.add(campoId, constraints);
 
-        labelNomeCuidador = new JLabel("Nome do Cuidador:");
+        labelIdosoId = new JLabel("ID do idoso:");
         constraints.gridx = 0;
         constraints.gridy = 1;
-        painelEntrada.add(labelNomeCuidador, constraints);
+        painelEntrada.add(labelIdosoId, constraints);
 
-        campoNomeCuidador = new JTextField(20);
+        comboBoxIdosoId = new JComboBox<>();
+        carregarIdososNoComboBox();
         constraints.gridx = 1;
         constraints.gridy = 1;
-        painelEntrada.add(campoNomeCuidador, constraints);
+        painelEntrada.add(comboBoxIdosoId, constraints);
 
-        labelTelefone = new JLabel("Telefone:");
+        labelDoencasPreexistentes = new JLabel("Doenças ou condições:");
         constraints.gridx = 0;
         constraints.gridy = 2;
-        painelEntrada.add(labelTelefone, constraints);
+        painelEntrada.add(labelDoencasPreexistentes, constraints);
 
-        campoTelefone = new JTextField(20);
+        campoDoencasPreexistentes = new JTextField(20);
         constraints.gridx = 1;
         constraints.gridy = 2;
-        painelEntrada.add(campoTelefone, constraints);
-
-        labelCpf = new JLabel("CPF:");
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        painelEntrada.add(labelCpf, constraints);
-
-        campoCpf = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 3;
-        painelEntrada.add(campoCpf, constraints);
-
-        labelDataRegistro = new JLabel("Data do registro:");
-        constraints.gridx = 0;
-        constraints.gridy = 4;
-        painelEntrada.add(labelDataRegistro, constraints);
-
-        campoDataRegistro = new JTextField(20);
-        constraints.gridx = 1;
-        constraints.gridy = 4;
-        painelEntrada.add(campoDataRegistro, constraints);
+        painelEntrada.add(campoDoencasPreexistentes, constraints);
 
         montarPainelBotoes(constraints, painelEntrada);
 
@@ -111,30 +92,30 @@ public class CuidadorForm extends JFrame{
 
         botaoSalvar = new JButton("Salvar");
         botaoSalvar.addActionListener(e -> executarBotaoSalvar());
-        constraints.gridx = 0;
-        constraints.gridy = 0;
+        botoesConstraints.gridx = 0;
+        botoesConstraints.gridy = 0;
         painelBotoes.add(botaoSalvar, botoesConstraints);
 
         botaoCancelar = new JButton("Cancelar");
         botaoCancelar.addActionListener(e -> limparCampos());
-        constraints.gridx = 1;
-        constraints.gridy = 0;
+        botoesConstraints.gridx = 1;
+        botoesConstraints.gridy = 0;
         painelBotoes.add(botaoCancelar, botoesConstraints);
 
         botaoDeletar = new JButton("Deletar");
         botaoDeletar.addActionListener(e -> executarBotaoDeletar());
-        constraints.gridx = 2;
-        constraints.gridy = 0;
+        botoesConstraints.gridx = 2;
+        botoesConstraints.gridy = 0;
         painelBotoes.add(botaoDeletar, botoesConstraints);
 
         botaoVoltar = new JButton("Voltar");
         botaoVoltar.addActionListener(e -> executarBotaoVoltar());
-        constraints.gridx = 3;
-        constraints.gridy = 0;
+        botoesConstraints.gridx = 3;
+        botoesConstraints.gridy = 0;
         painelBotoes.add(botaoVoltar, botoesConstraints);
 
         constraints.gridx = 0;
-        constraints.gridy = 5;
+        constraints.gridy = 3;
         constraints.gridwidth = 2;
         painelEntrada.add(painelBotoes, constraints);
     }
@@ -146,7 +127,7 @@ public class CuidadorForm extends JFrame{
         tabela.setDefaultEditor(Object.class, null);
         tabela.getTableHeader().setReorderingAllowed(false);
         tabela.setModel(carregarDados());
-        tabela.getSelectionModel().addListSelectionListener(this::selecionarCuidador);
+        tabela.getSelectionModel().addListSelectionListener(this::selecionarHistorico);
 
         JScrollPane scrollPane = new JScrollPane(tabela);
 
@@ -154,33 +135,50 @@ public class CuidadorForm extends JFrame{
         return painelSaida;
     }
 
+    private void carregarIdososNoComboBox() {
+        try {
+            List<Idoso> idosos = idosoService.listarIdosos();
+            comboBoxIdosoId.removeAllItems();
+            for (Idoso idoso : idosos) {
+                comboBoxIdosoId.addItem(idoso);
+            }
+        } catch (Exception e) {
+            showMessageDialog(this,
+                    "Erro ao carregar lista de idosos: " + e.getMessage(),
+                    "Erro", ERROR_MESSAGE);
+        }
+    }
+
     private DefaultTableModel carregarDados() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID");
-        model.addColumn("Nome");
-        model.addColumn("Telefone");
-        model.addColumn("CPF");
-        model.addColumn("Data de registro");
+        model.addColumn("Idoso id");
+        model.addColumn("Doenças preexistentes");
 
-        service.listarCuidadores().forEach(cuidador -> model.addRow(new Object[]{
-                cuidador.getId(), cuidador.getNome(), cuidador.getTelefone(),
-                cuidador.getCpf(), cuidador.getDataRegistro()}));
+        historicoService.listarHistoricos().forEach(historico -> model.addRow(new Object[]{
+                historico.getId(), historico.getIdoso_id(), historico.getDoencas_preexistentes()}));
 
         return model;
     }
 
     private void executarBotaoSalvar() {
-        try{
-            service.salvar(construirCuidador());
+        try {
+            if (comboBoxIdosoId.getSelectedItem() == null) {
+                throw new Exception("Selecione um idoso.");
+            }
+
+            historicoService.salvar(construirHistorico());
             limparCampos();
             tabela.setModel(carregarDados());
-        }catch(Exception e){
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            showMessageDialog(this,
+                    "Erro ao salvar o histórico: " + e.getMessage(),
+                    "Erro", ERROR_MESSAGE);
         }
     }
 
     private void executarBotaoDeletar() {
-        if(campoId.getText().isEmpty()){
+        if (campoId.getText().isEmpty()) {
             showMessageDialog(
                     this, "É necessário selecionar um item para que se possa deletar!",
                     "Aviso", INFORMATION_MESSAGE);
@@ -189,14 +187,14 @@ public class CuidadorForm extends JFrame{
 
         int id = Integer.parseInt(campoId.getText());
         try {
-            service.excluir(id);
+            historicoService.excluir(id);
+            limparCampos();
+            tabela.setModel(carregarDados());
         } catch (SQLException e) {
             showMessageDialog(
-                    this, "Erro ao tentar deletar o Diretor!: " + e.getMessage(),
+                    this, "Erro ao tentar deletar o histórico deste idoso!: " + e.getMessage(),
                     "Erro", ERROR_MESSAGE);
         }
-        limparCampos();
-        tabela.setModel(carregarDados());
     }
 
     private void executarBotaoVoltar() {
@@ -206,49 +204,42 @@ public class CuidadorForm extends JFrame{
     }
 
     private void limparCampos() {
-        campoNomeCuidador.setText("");
-        campoTelefone.setText("");
-        campoCpf.setText("");
-        campoDataRegistro.setText("");
+        comboBoxIdosoId.setSelectedItem(null);
+        campoDoencasPreexistentes.setText("");
         campoId.setText("");
     }
 
-    private Cuidador construirCuidador(){
-        String nome = campoNomeCuidador.getText().trim();
-        String telefone = campoTelefone.getText().trim();
-        String cpf = campoCpf.getText().trim();
-        String dataRegistroText = campoDataRegistro.getText().trim();
-
-        Date dataRegistro = null;
-        if(!dataRegistroText.isEmpty()){
-            try {
-                dataRegistro = Date.valueOf(dataRegistroText);
-            } catch (IllegalArgumentException e) {
-                showMessageDialog(null,
-                        "A data de registro do cuidador é inválida! Deve estar no formato YYYY-MM-DD.");
-            }
+    private Historico construirHistorico() throws Exception {
+        Idoso idosoSelecionado = (Idoso) comboBoxIdosoId.getSelectedItem();
+        if (idosoSelecionado == null) {
+            throw new Exception("Selecione um idoso.");
         }
 
+        String doencasPreexistentes = campoDoencasPreexistentes.getText().trim();
+
         return campoId.getText().isEmpty()
-                ? new Cuidador(nome, telefone, cpf, dataRegistro)
-                : new Cuidador(Integer.parseInt(campoId.getText()), nome, telefone, cpf, dataRegistro);
+                ? new Historico(idosoSelecionado.getId(), doencasPreexistentes)
+                : new Historico(Integer.parseInt(campoId.getText()), idosoSelecionado.getId(), doencasPreexistentes);
     }
 
-    private void selecionarCuidador(ListSelectionEvent e){
+    private void selecionarHistorico(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
             int selectedRow = tabela.getSelectedRow();
             if (selectedRow != -1) {
                 var id = (Integer) tabela.getValueAt(selectedRow, 0);
-                var nome = (String) tabela.getValueAt(selectedRow, 1);
-                var telefone = (String) tabela.getValueAt(selectedRow, 2);
-                var cpf = (String) tabela.getValueAt(selectedRow, 3);
-                var dataRegistro = (Date) tabela.getValueAt(selectedRow, 4);
+                var idoso = (Integer) tabela.getValueAt(selectedRow, 1);
+                var doencasPreexistentes = (String) tabela.getValueAt(selectedRow, 2);
 
                 campoId.setText(id.toString());
-                campoNomeCuidador.setText(nome);
-                campoTelefone.setText(telefone);
-                campoCpf.setText(cpf);
-                campoDataRegistro.setText(dataRegistro.toString());
+                campoDoencasPreexistentes.setText(doencasPreexistentes);
+
+                for (int i = 0; i < comboBoxIdosoId.getItemCount(); i++) {
+                    Idoso item = comboBoxIdosoId.getItemAt(i);
+                    if (item != null && item.getId() == idoso) {
+                        comboBoxIdosoId.setSelectedItem(item);
+                        break;
+                    }
+                }
             }
         }
     }

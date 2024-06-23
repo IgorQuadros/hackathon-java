@@ -5,6 +5,7 @@ import dao.CuidadorDao;
 import model.AgenteDeSaude;
 import model.Cuidador;
 
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -77,7 +78,8 @@ public class AgenteDeSaudeService {
         }
 
         if (erros.length() > 0) {
-            showMessageDialog(null, erros.toString());
+            showMessageDialog(null, erros.toString(),
+                    "Erro de Validação", JOptionPane.ERROR_MESSAGE);
             throw new Exception(erros.toString());
         }
     }

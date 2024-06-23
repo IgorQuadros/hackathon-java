@@ -1,7 +1,5 @@
 package model;
 
-import service.CuidadorService;
-
 import java.sql.Date;
 
 public class Cuidador {
@@ -10,6 +8,13 @@ public class Cuidador {
     private String telefone;
     private String cpf;
     private Date dataRegistro;
+
+    public Cuidador() {
+        this.nome = nome;
+        this.telefone = telefone;
+        this.cpf = cpf;
+        this.dataRegistro = dataRegistro;
+    }
 
     public Cuidador(String nome, String telefone, String cpf, Date dataRegistro) {
         this.nome = nome;
