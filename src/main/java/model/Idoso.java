@@ -1,24 +1,26 @@
 package model;
 
+import java.util.List;
+
 public class Idoso {
     private Integer id;
     private String nome;
-    private String agenda;
-    private String vacinas;
-    private String cuidador;
+    private String telefone;
+    private String email;
+    private Cuidador cuidador;
 
-    public Idoso(String nomeIdoso, String agenda, String vacinas, String cuidador) {
-        this.nome = nomeIdoso;
-        this.agenda = agenda;
-        this.vacinas = vacinas;
+    public Idoso(String nome, String telefone, String email, Cuidador cuidador) {
+        this.nome = nome;
+        this.telefone = telefone;
+        this.email = email;
         this.cuidador = cuidador;
     }
 
-    public Idoso(Integer id, String nomeIdoso, String agenda, String vacinas, String cuidador) {
+    public Idoso(Integer id, String nome, String telefone, String email, Cuidador cuidador) {
         this.id = id;
-        this.nome = nomeIdoso;
-        this.agenda = agenda;
-        this.vacinas = vacinas;
+        this.nome = nome;
+        this.telefone = telefone;
+        this.email = email;
         this.cuidador = cuidador;
     }
 
@@ -38,27 +40,27 @@ public class Idoso {
         this.nome = nome;
     }
 
-    public String getAgenda() {
-        return agenda;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setAgenda(String agenda) {
-        this.agenda = agenda;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
-    public String getVacinas() {
-        return vacinas;
+    public String getEmail() {
+        return email;
     }
 
-    public void setVacinas(String vacinas) {
-        this.vacinas = vacinas;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getCuidador() {
+    public Cuidador getCuidador() {
         return cuidador;
     }
 
-    public void setCuidador(String cuidador) {
+    public void setCuidador(Cuidador cuidador) {
         this.cuidador = cuidador;
     }
 
