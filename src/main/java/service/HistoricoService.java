@@ -38,7 +38,7 @@ public class HistoricoService {
         }
     }
 
-    public List<Historico> listarHistoricos(){
+    public static List<Historico> listarHistoricos(){
         try {
             var dao = new HistoricoDao();
             return dao.listarTodos();

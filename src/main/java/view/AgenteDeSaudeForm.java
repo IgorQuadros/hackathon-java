@@ -1,7 +1,6 @@
 package view;
 
 import model.AgenteDeSaude;
-import model.Cuidador;
 import service.AgenteDeSaudeService;
 
 import javax.swing.*;

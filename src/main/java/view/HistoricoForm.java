@@ -2,8 +2,10 @@ package view;
 
 import model.Historico;
 import model.Idoso;
+import model.Vacinas; // Importar a classe Vacinas
 import service.HistoricoService;
 import service.IdosoService;
+import service.VacinaService; // Importar o serviço de Vacina
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -17,10 +19,13 @@ import static javax.swing.JOptionPane.*;
 public class HistoricoForm extends JFrame {
     private IdosoService idosoService;
     private HistoricoService historicoService;
+    private VacinaService vacinaService; // Serviço para lidar com as vacinas
     private JLabel labelId;
     private JTextField campoId;
     private JLabel labelIdosoId;
     private JComboBox<Idoso> comboBoxIdosoId;
+    private JLabel labelVacinaId; // Novo label para a vacina
+    private JComboBox<Vacinas> comboBoxVacinaId; // Novo JComboBox para vacinas
     private JLabel labelDoencasPreexistentes;
     private JTextField campoDoencasPreexistentes;
     private JButton botaoSalvar;
@@ -32,6 +37,7 @@ public class HistoricoForm extends JFrame {
     public HistoricoForm() {
         idosoService = new IdosoService();
         historicoService = new HistoricoService();
+        vacinaService = new VacinaService(); // Inicializar o serviço de vacinas
 
         setTitle("Histórico de Saúde do Idoso");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,14 +76,25 @@ public class HistoricoForm extends JFrame {
         constraints.gridy = 1;
         painelEntrada.add(comboBoxIdosoId, constraints);
 
-        labelDoencasPreexistentes = new JLabel("Doenças ou condições:");
+        labelVacinaId = new JLabel("Vacina:");
         constraints.gridx = 0;
         constraints.gridy = 2;
+        painelEntrada.add(labelVacinaId, constraints);
+
+        comboBoxVacinaId = new JComboBox<>();
+        carregarVacinasNoComboBox();
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        painelEntrada.add(comboBoxVacinaId, constraints);
+
+        labelDoencasPreexistentes = new JLabel("Doenças ou condições:");
+        constraints.gridx = 0;
+        constraints.gridy = 3;
         painelEntrada.add(labelDoencasPreexistentes, constraints);
 
         campoDoencasPreexistentes = new JTextField(20);
         constraints.gridx = 1;
-        constraints.gridy = 2;
+        constraints.gridy = 3;
         painelEntrada.add(campoDoencasPreexistentes, constraints);
 
         montarPainelBotoes(constraints, painelEntrada);
@@ -115,7 +132,7 @@ public class HistoricoForm extends JFrame {
         painelBotoes.add(botaoVoltar, botoesConstraints);
 
         constraints.gridx = 0;
-        constraints.gridy = 3;
+        constraints.gridy = 4;
         constraints.gridwidth = 2;
         painelEntrada.add(painelBotoes, constraints);
     }
@@ -149,14 +166,29 @@ public class HistoricoForm extends JFrame {
         }
     }
 
+    private void carregarVacinasNoComboBox() {
+        try {
+            List<Vacinas> vacinas = vacinaService.listarTodos();
+            comboBoxVacinaId.removeAllItems();
+            for (Vacinas vacina : vacinas) {
+                comboBoxVacinaId.addItem(vacina);
+            }
+        } catch (Exception e) {
+            showMessageDialog(this,
+                    "Erro ao carregar lista de vacinas: " + e.getMessage(),
+                    "Erro", ERROR_MESSAGE);
+        }
+    }
+
     private DefaultTableModel carregarDados() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID");
         model.addColumn("Idoso id");
+        model.addColumn("Vacina id");
         model.addColumn("Doenças preexistentes");
 
         historicoService.listarHistoricos().forEach(historico -> model.addRow(new Object[]{
-                historico.getId(), historico.getIdoso_id(), historico.getDoencas_preexistentes()}));
+                historico.getId(), historico.getIdoso_id(), historico.getVacina_id(), historico.getDoencas_preexistentes()}));
 
         return model;
     }
@@ -165,6 +197,10 @@ public class HistoricoForm extends JFrame {
         try {
             if (comboBoxIdosoId.getSelectedItem() == null) {
                 throw new Exception("Selecione um idoso.");
+            }
+
+            if (comboBoxVacinaId.getSelectedItem() == null) {
+                throw new Exception("Selecione uma vacina.");
             }
 
             historicoService.salvar(construirHistorico());
@@ -205,21 +241,28 @@ public class HistoricoForm extends JFrame {
 
     private void limparCampos() {
         comboBoxIdosoId.setSelectedItem(null);
+        comboBoxVacinaId.setSelectedItem(null);
         campoDoencasPreexistentes.setText("");
         campoId.setText("");
     }
 
     private Historico construirHistorico() throws Exception {
         Idoso idosoSelecionado = (Idoso) comboBoxIdosoId.getSelectedItem();
+        Vacinas vacinaSelecionada = (Vacinas) comboBoxVacinaId.getSelectedItem();
+
         if (idosoSelecionado == null) {
             throw new Exception("Selecione um idoso.");
+        }
+
+        if (vacinaSelecionada == null) {
+            throw new Exception("Selecione uma vacina.");
         }
 
         String doencasPreexistentes = campoDoencasPreexistentes.getText().trim();
 
         return campoId.getText().isEmpty()
-                ? new Historico(idosoSelecionado.getId(), doencasPreexistentes)
-                : new Historico(Integer.parseInt(campoId.getText()), idosoSelecionado.getId(), doencasPreexistentes);
+                ? new Historico(idosoSelecionado.getId(), vacinaSelecionada.getId(), doencasPreexistentes)
+                : new Historico(Integer.parseInt(campoId.getText()), idosoSelecionado.getId(), vacinaSelecionada.getId(), doencasPreexistentes);
     }
 
     private void selecionarHistorico(ListSelectionEvent e) {
@@ -228,7 +271,8 @@ public class HistoricoForm extends JFrame {
             if (selectedRow != -1) {
                 var id = (Integer) tabela.getValueAt(selectedRow, 0);
                 var idoso = (Integer) tabela.getValueAt(selectedRow, 1);
-                var doencasPreexistentes = (String) tabela.getValueAt(selectedRow, 2);
+                var vacina = (Integer) tabela.getValueAt(selectedRow, 2);
+                var doencasPreexistentes = (String) tabela.getValueAt(selectedRow, 3);
 
                 campoId.setText(id.toString());
                 campoDoencasPreexistentes.setText(doencasPreexistentes);
@@ -237,6 +281,14 @@ public class HistoricoForm extends JFrame {
                     Idoso item = comboBoxIdosoId.getItemAt(i);
                     if (item != null && item.getId() == idoso) {
                         comboBoxIdosoId.setSelectedItem(item);
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < comboBoxVacinaId.getItemCount(); i++) {
+                    Vacinas item = comboBoxVacinaId.getItemAt(i);
+                    if (item != null && item.getId() == vacina) {
+                        comboBoxVacinaId.setSelectedItem(item);
                         break;
                     }
                 }
