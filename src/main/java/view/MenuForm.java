@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+import static javax.swing.SwingUtilities.invokeLater;
+
 public class MenuForm extends JFrame {
     private JLabel labelPrincipal;
     private JLabel labelCuidador;
@@ -12,11 +14,17 @@ public class MenuForm extends JFrame {
     private JButton botaoAgente;
     private JLabel labelHistorico;
     private JButton botaoHistorico;
+    private JLabel labelAgenda;
+    private JButton botaoAgenda;
+    private JLabel labelVacinas;
+    private JButton botaoVacinas;
+    private JLabel labelIdosos;
+    private JButton botaoIdosos;
 
     public MenuForm(){
         setTitle("Menu Principal");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 200);
+        setSize(400, 400);
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -66,6 +74,39 @@ public class MenuForm extends JFrame {
         constraints.gridy = 3;
         panel.add(botaoHistorico, constraints);
 
+        labelAgenda = new JLabel("Acessar Agenda de idosos");
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        panel.add(labelAgenda, constraints);
+
+        botaoAgenda = new JButton("Agenda");
+        botaoAgenda.addActionListener(e -> abrirAgendaForm());
+        constraints.gridx = 1;
+        constraints.gridy = 4;
+        panel.add(botaoAgenda, constraints);
+
+        labelVacinas = new JLabel("Acessar Vacinas de idosos");
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        panel.add(labelVacinas, constraints);
+
+        botaoVacinas = new JButton("Vacinas");
+        botaoVacinas.addActionListener(e -> abrirVacinasForm());
+        constraints.gridx = 1;
+        constraints.gridy = 5;
+        panel.add(botaoVacinas, constraints);
+
+        labelIdosos = new JLabel("Acessar Idosos");
+        constraints.gridx = 0;
+        constraints.gridy = 6;
+        panel.add(labelIdosos, constraints);
+
+        botaoIdosos = new JButton("Idosos");
+        botaoIdosos.addActionListener(e -> abrirIdososForm());
+        constraints.gridx = 1;
+        constraints.gridy = 6;
+        panel.add(botaoIdosos, constraints);
+
         add(panel);
         setLocationRelativeTo(null);
     }
@@ -83,6 +124,21 @@ public class MenuForm extends JFrame {
     private void abrirHistoricoForm() {
         HistoricoForm historico = new HistoricoForm();
         historico.setVisible(true);
+        dispose();
+    }
+    private void abrirAgendaForm() {
+        AgendaForm form = new AgendaForm();
+        form.setVisible(true);
+        dispose();
+    }
+    private void abrirVacinasForm(){
+        VacinasForm form = new VacinasForm();
+        form.setVisible(true);
+        dispose();
+    }
+    private void abrirIdososForm(){
+        IdososForm form = new IdososForm();
+        form.setVisible(true);
         dispose();
     }
 }

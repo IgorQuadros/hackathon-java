@@ -5,17 +5,17 @@ import java.util.Date;
 public class Vacinas {
     private Integer id;
     private String nome;
-    private Date data_validade;
+    private Date dataValidade;
 
-    public Vacinas(String nome, Date data_validade) {
+    public Vacinas(String nome, Date dataValidade) {
         this.nome = nome;
-        this.data_validade = data_validade;
+        this.dataValidade = dataValidade;
     }
 
-    public Vacinas(Integer id, String nome, Date data_validade) {
+    public Vacinas(Integer id, String nome, Date dataValidade) {
         this.id = id;
         this.nome = nome;
-        this.data_validade = data_validade;
+        this.dataValidade = dataValidade;
     }
 
     public Integer getId() {
@@ -34,16 +34,20 @@ public class Vacinas {
         this.nome = nome;
     }
 
-    public Date getData_validade() {
-        return data_validade;
+    public Date getDataValidade() {
+        return dataValidade;
     }
 
-    public void setData_validade(Date data_validade) {
-        this.data_validade = data_validade;
+    public void setDataValidade(Date dataValidade) {
+        this.dataValidade = dataValidade;
     }
 
     @Override
     public String toString() {
-        return nome;
+        return "Vacinas{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", dataValidade=" + dataValidade +
+                '}';
     }
 }

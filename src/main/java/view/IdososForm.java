@@ -8,16 +8,16 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-public class ListaIdososForm extends JFrame {
+public class IdososForm extends JFrame {
     private IdosoService idosoService;
     private JTable tabela;
 
-    public ListaIdososForm() {
+    public IdososForm() {
         idosoService = new IdosoService();
 
         setTitle("Lista de Idosos Cadastrados");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(800, 400); // Ajuste o tamanho conforme necessário
+        setSize(800, 400);
 
         getContentPane().add(montarPainelSaida(), BorderLayout.CENTER);
         getContentPane().add(montarPainelBotoes(), BorderLayout.SOUTH);
@@ -82,11 +82,4 @@ public class ListaIdososForm extends JFrame {
         menuForm.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            ListaIdososForm form = new ListaIdososForm();
-            form.setVisible(true);
-        });
-    }
 }
-
